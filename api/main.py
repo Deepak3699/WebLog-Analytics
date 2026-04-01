@@ -12,7 +12,32 @@ from fastapi.middleware.cors import CORSMiddleware
 # INIT APP
 # -----------------------------------
 app = FastAPI(title="Web Log Analyzer API")
+@app.post("/api/analyze")
+async def analyze(file: UploadFile = File(...)):
+    try:
+        content = (await file.read()).decode("utf-8")
 
+        df = process_logs(content)
+
+        print("DEBUG DF:", df.head())  # 👈 ADD THIS
+
+        anomalies = df[df['prediction'] == 1]
+
+        return {
+            "total_requests": len(df),
+            "error_rate": float((df['status'] >= 400).mean()),
+            "top_urls": df['url'].value_counts().head(10).to_dict(),
+            "status_distribution": df['status'].value_counts().to_dict(),
+            "hour_distribution": df['hour'].value_counts().to_dict(),
+            "anomalies": {
+                "count": int(len(anomalies)),
+                "percentage": float(len(anomalies)/len(df)*100)
+            }
+        }
+
+    except Exception as e:
+        print("🔥 ERROR:", str(e))  # 👈 IMPORTANT
+        raise HTTPException(500, str(e))
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
