@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Log Analyzer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📊 Web Log Analyzer</h1>
+
+<div class="upload-box">
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Analyze</button>
+</div>
+
+<div id="stats"></div>
+
+<canvas id="hourChart"></canvas>
+<canvas id="statusChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
